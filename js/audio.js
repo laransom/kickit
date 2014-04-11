@@ -1,6 +1,13 @@
-var sounds = ['clap', 'crash', 'hi_hat', 'hi_tom', 'kick', 'low_tom', 'snare'];
+var sounds = ['kick', 'snare', 'clap', 'hi_hat', 'crash', 'hi_tom', 'low_tom'];
 var loadedSounds = [];
-var loaded = false;
+var clap,
+    crash,
+    hi_hat,
+    hi_tom,
+    kick,
+    low_tom,
+    snare;
+var audioLoaded = new Event('audioLoaded');
 
 function getFiles(){
   var soundFiles = [];
@@ -12,11 +19,7 @@ function getFiles(){
 
 function Track(name, buffer) {
   this.track = name;
-  this.audio = audioContext.createBufferSource();
-  this.audio.loop = true;
-  this.audio.buffer = buffer;
-  this.audio.gain.value = 1;
-  this.audio.connect(submix);
+  this.buffer = buffer;
 }
 
 var audioContext;
@@ -24,9 +27,9 @@ var audioAnalyser;
 var submix;
 var bufferLoader;
 
-window.addEventListener('load', init, false);
+window.addEventListener('load', audioInit, false);
 
-function init() {
+function audioInit() {
   window.AudioContext = window.AudioContext||window.webkitAudioContext;
   audioContext = new AudioContext();
   submix = audioContext.createGain();
@@ -46,13 +49,17 @@ function init() {
 
 function finishedLoading(bufferList){
   for(var i=0;i<bufferList.length;i++){
-    loadedSounds.push(new Track(bufferList[i].name, bufferList[i]));
+    window[bufferList[i].name] = new Track(bufferList[i].name, bufferList[i]);
   }
-  loadedSounds.forEach(function(sound){
-    sound.audio.start(0);
-  });
-  loaded = true;
-  // makeMusic();
+  window.dispatchEvent(audioLoaded);
+}
+
+function playSound(track) {
+  var buffer = track.buffer;
+  var source = audioContext.createBufferSource(); // creates a sound source
+  source.buffer = buffer;                    // tell the source which sound to play
+  source.connect(submix);       // connect the source to the context's destination (the speakers)
+  source.start(0);                           // play the source now
 }
 
 // function makeMusic(){
