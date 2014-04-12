@@ -61,6 +61,12 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+video {
+  position:absolute;
+  visibility:hidden;
+}
+
+
 
 
 
