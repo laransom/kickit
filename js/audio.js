@@ -147,8 +147,16 @@ function loopOver(){
   synthPlaying = false;
   bassPlaying = false;
   if (looping){
-    nextSynth = nextSynth ? nextSynth : currentLoops.synth;
-    nextBass = nextBass ? nextBass : currentLoops.bass;
+    if (currentLoops.synth === nextSynth){
+      nextSynth = null;
+    } else {
+      nextSynth = nextSynth ? nextSynth : currentLoops.synth;
+    }
+    if (currentLoops.bass === nextBass){
+      nextBass = null;
+    } else {
+      nextBass = nextBass ? nextBass : currentLoops.bass;
+    }
   }
   currentLoops.synth = null;
   currentLoops.bass = null;
